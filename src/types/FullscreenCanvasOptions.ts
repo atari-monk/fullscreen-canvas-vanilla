@@ -1,6 +1,6 @@
-import type { RenderContext } from "../types/RenderContext.js";
+import type { FrameContext } from "./FrameContext.js";
 
 export interface FullscreenCanvasOptions {
-    render: (context: RenderContext) => void;
+    frameTick: (context: FrameContext) => void;
     loop?: boolean;
 }

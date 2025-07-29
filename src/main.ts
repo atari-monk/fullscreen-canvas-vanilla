@@ -1,11 +1,11 @@
 import "./style.css";
 import "./fullscreen-canvas.css";
 import { FullscreenCanvas } from "./fullscreen-canvas.js";
-import type { RenderContext } from "./types/RenderContext.js";
+import type { FrameContext } from "./types/FrameContext.js";
 
 // Example usage
 const canvas = new FullscreenCanvas("canvas-container", "main-canvas", {
-    render: (context: RenderContext) => {
+    frameTick: (context: FrameContext) => {
         const { ctx, width, height, deltaTime: _, totalTime } = context;
         // Draw a rotating rectangle
         ctx.fillStyle = `hsl(${(totalTime * 50) % 360}, 100%, 50%)`;

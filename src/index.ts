@@ -1,2 +1,2 @@
 export { FullscreenCanvas } from "./fullscreen-canvas.js";
-export type { RenderContext } from "./types/RenderContext.js";
+export type { FrameContext } from "./types/FrameContext.js";

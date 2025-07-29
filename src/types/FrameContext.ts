@@ -1,4 +1,4 @@
-export type RenderContext = {
+export type FrameContext = {
     ctx: CanvasRenderingContext2D;
     width: number;
     height: number;

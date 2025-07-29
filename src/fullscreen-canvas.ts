@@ -1,3 +1,4 @@
+import type { FrameContext } from "./types/FrameContext.js";
 import type { FullscreenCanvasOptions } from "./types/FullscreenCanvasOptions.js";
 
 export class FullscreenCanvas {
@@ -55,7 +56,7 @@ export class FullscreenCanvas {
         // Start rendering
         this.lastTime = 0;
         this.totalTime = 0;
-        this.rafId = requestAnimationFrame(this.renderFrame.bind(this));
+        this.rafId = requestAnimationFrame(this.frameTick.bind(this));
     }
 
     private resizeCanvas(): void {
@@ -66,7 +67,7 @@ export class FullscreenCanvas {
         this.canvas.height = height;
     }
 
-    private renderFrame(time: number): void {
+    private frameTick(time: number): void {
         const ctx = this.canvas.getContext("2d");
         if (!ctx) return;
 
@@ -79,18 +80,18 @@ export class FullscreenCanvas {
 
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.options.render(
-            {
-                ctx: ctx,
-                width: this.canvas.width,
-                height: this.canvas.height,
-                deltaTime: deltaTime,
-                totalTime: this.totalTime,
-            }
-        );
+        const context: FrameContext = {
+            ctx,
+            width: this.canvas.width,
+            height: this.canvas.height,
+            deltaTime,
+            totalTime: this.totalTime,
+        };
+
+        this.options.frameTick(context);
 
         if (this.options.loop) {
-            this.rafId = requestAnimationFrame(this.renderFrame.bind(this));
+            this.rafId = requestAnimationFrame(this.frameTick.bind(this));
         }
     }
 
