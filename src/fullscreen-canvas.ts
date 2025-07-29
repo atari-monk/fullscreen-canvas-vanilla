@@ -1,4 +1,4 @@
-import type { FullscreenCanvasOptions } from "./types/FullscreenCanvasOptions";
+import type { FullscreenCanvasOptions } from "./types/FullscreenCanvasOptions.js";
 
 export class FullscreenCanvas {
     private canvas: HTMLCanvasElement;
@@ -79,12 +79,14 @@ export class FullscreenCanvas {
 
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.options.draw(
-            ctx,
-            this.canvas.width,
-            this.canvas.height,
-            deltaTime,
-            this.totalTime
+        this.options.render(
+            {
+                ctx: ctx,
+                width: this.canvas.width,
+                height: this.canvas.height,
+                deltaTime: deltaTime,
+                totalTime: this.totalTime,
+            }
         );
 
         if (this.options.loop) {
