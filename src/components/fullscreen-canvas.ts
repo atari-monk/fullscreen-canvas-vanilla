@@ -1,8 +1,8 @@
-import type { CanvasResizer } from "./canvas-resizer.js";
-import type { EventSystem } from "./event-system.js";
-import type { FullscreenService } from "./fullscreen-service.js";
-import type { Renderer } from "./renderer.js";
-import type { EngineHook } from "./types/engine-hook.js";
+import type { EngineHook } from "../interfaces/engine-hook.js";
+import type { CanvasResizer } from "../core/canvas-resizer.js";
+import type { EventSystem } from "../core/event-system.js";
+import type { FullscreenService } from "../core/fullscreen-service.js";
+import type { Renderer } from "../core/renderer.js";
 
 export class FullscreenCanvas {
     constructor(

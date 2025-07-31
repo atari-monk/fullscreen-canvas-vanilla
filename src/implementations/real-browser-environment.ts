@@ -1,4 +1,4 @@
-import type { BrowserEnvironment } from "./types/browser-environment.js";
+import type { BrowserEnvironment } from "../interfaces/browser-environment.js";
 
 export class RealBrowserEnvironment implements BrowserEnvironment {
     getElementById(id: string): HTMLElement | null {

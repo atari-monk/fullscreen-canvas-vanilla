@@ -1,12 +1,12 @@
-import { FullscreenCanvas } from "./fullscreen-canvas.js";
-import { RealBrowserEnvironment } from "./real-browser-environment.js";
-import { EventSystem } from "./event-system.js";
-import { CanvasResizer } from "./canvas-resizer.js";
-import { FullscreenService } from "./fullscreen-service.js";
-import { Renderer } from "./renderer.js";
-import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
-import type { EngineHook } from "./types/engine-hook.js";
-import { TimeCalculator } from "./time-calculator.js";
+import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
+import type { EngineHook } from "../interfaces/engine-hook.js";
+import { RealBrowserEnvironment } from "../implementations/real-browser-environment.js";
+import { EventSystem } from "../core/event-system.js";
+import { CanvasResizer } from "../core/canvas-resizer.js";
+import { FullscreenService } from "../core/fullscreen-service.js";
+import { Renderer } from "../core/renderer.js";
+import { TimeCalculator } from "../core/time-calculator.js";
+import { FullscreenCanvas } from "../components/fullscreen-canvas.js";
 
 export function createGameCanvas(
     containerId: string,

@@ -1,4 +1,4 @@
-import type { TimeData } from "./types/time-data.js";
+import type { TimeData } from "../interfaces/time-data.js";
 
 export class TimeCalculator {
     private lastTime: number = 0;

@@ -1,5 +1,5 @@
-import type { BrowserEnvironment } from "./types/browser-environment.js";
-import { EventSystem } from "./event-system.js";
+import type { BrowserEnvironment } from "../interfaces/browser-environment.js";
+import type { EventSystem } from "./event-system.js";
 
 export class CanvasResizer {
     constructor(

@@ -1,8 +1,8 @@
-import type { BrowserEnvironment } from "./types/browser-environment.js";
-import type { FrameContext } from "./types/frame-context.js";
-import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
-import type { EngineHook as EngineHook } from "./types/engine-hook.js";
-import type { TimeCalculator } from "./time-calculator.js";
+import type { BrowserEnvironment } from "../interfaces/browser-environment.js";
+import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
+import type { FrameContext } from "../interfaces/frame-context.js";
+import type { EngineHook } from "../interfaces/engine-hook.js";
+import type { TimeCalculator } from "../core/time-calculator.js";
 
 export class Renderer {
     private rafId: number = 0;

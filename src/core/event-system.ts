@@ -1,5 +1,5 @@
-import type { ListenerEntry } from "./types/listener-entry.js";
-import type { BrowserEnvironment } from "./types/browser-environment.js";
+import type { BrowserEnvironment } from "../interfaces/browser-environment.js";
+import type { ListenerEntry } from "../interfaces/listener-entry.js";
 
 export class EventSystem {
     private listeners: Map<string, ListenerEntry> = new Map();
