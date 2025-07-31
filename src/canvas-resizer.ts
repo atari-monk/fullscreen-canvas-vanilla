@@ -1,8 +1,18 @@
+import type { BrowserEnvironment } from "./types/browser-environment.js";
+
 export class CanvasResizer {
-    constructor(private canvas: HTMLCanvasElement) {}
+    private browser: BrowserEnvironment;
+
+    constructor(
+        private canvas: HTMLCanvasElement,
+        browser: BrowserEnvironment
+    ) {
+        this.browser = browser;
+    }
 
     resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        const { width, height } = this.browser.getWindowDimensions();
+        this.canvas.width = width;
+        this.canvas.height = height;
     }
 }

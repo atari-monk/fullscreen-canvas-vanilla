@@ -1,17 +1,23 @@
+import type { BrowserEnvironment } from "./types/browser-environment.js";
+
 export class FullscreenService {
     private container: HTMLElement;
     private button: HTMLButtonElement;
     private isTouchDevice: boolean;
+    private browser: BrowserEnvironment;
 
-    constructor(container: HTMLElement) {
+    constructor(container: HTMLElement, browser: BrowserEnvironment) {
         this.container = container;
+        this.browser = browser;
         this.button = this.createFullscreenButton();
         this.isTouchDevice = this.detectTouchDevice();
         this.setupEventListeners();
     }
 
     private createFullscreenButton(): HTMLButtonElement {
-        const button = document.createElement("button");
+        const button = this.browser.createElement(
+            "button"
+        ) as HTMLButtonElement;
         button.className = "fullscreen-button";
         button.textContent = "Enter Fullscreen";
         this.container.appendChild(button);
@@ -27,7 +33,8 @@ export class FullscreenService {
     }
 
     private setupEventListeners(): void {
-        document.addEventListener(
+        this.browser.addEventListener(
+            "document",
             "fullscreenchange",
             this.handleFullscreenChange.bind(this)
         );
@@ -59,7 +66,8 @@ export class FullscreenService {
     }
 
     public destroy(): void {
-        document.removeEventListener(
+        this.browser.removeEventListener(
+            "document",
             "fullscreenchange",
             this.handleFullscreenChange.bind(this)
         );

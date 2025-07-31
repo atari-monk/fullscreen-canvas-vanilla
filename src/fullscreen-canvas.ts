@@ -4,6 +4,8 @@ import { FullscreenService } from "./fullscreen-service.js";
 import type { RenderStrategy } from "./types/render-strategy.js";
 import { DefaultRenderStrategy } from "./default-render-strategy.js";
 import { CanvasResizer } from "./canvas-resizer.js";
+import type { BrowserEnvironment } from "./types/browser-environment.js";
+import { RealBrowserEnvironment } from "./real-browser-environment.js";
 
 export class FullscreenCanvas {
     private canvas: HTMLCanvasElement;
@@ -15,15 +17,18 @@ export class FullscreenCanvas {
     private options: FullscreenCanvasOptions;
     private renderStrategy: RenderStrategy;
     private canvasResizer: CanvasResizer;
+    private browser: BrowserEnvironment;
 
     constructor(
         containerId: string,
         canvasId: string,
         options: FullscreenCanvasOptions,
-        renderStrategy: RenderStrategy = new DefaultRenderStrategy()
+        renderStrategy: RenderStrategy = new DefaultRenderStrategy(),
+        browser: BrowserEnvironment = new RealBrowserEnvironment()
     ) {
-        const container = document.getElementById(containerId);
-        const canvas = document.getElementById(canvasId);
+        this.browser = browser;
+        const container = this.browser.getElementById(containerId);
+        const canvas = this.browser.getElementById(canvasId);
 
         if (!container || !canvas) {
             throw new Error(
@@ -39,8 +44,11 @@ export class FullscreenCanvas {
         this.canvas = canvas;
         this.options = options;
         this.renderStrategy = renderStrategy;
-        this.fullscreenService = new FullscreenService(this.container);
-        this.canvasResizer = new CanvasResizer(this.canvas);
+        this.fullscreenService = new FullscreenService(
+            this.container,
+            this.browser
+        );
+        this.canvasResizer = new CanvasResizer(this.canvas, this.browser);
 
         this.init();
     }
@@ -52,7 +60,9 @@ export class FullscreenCanvas {
         // Start rendering
         this.lastTime = 0;
         this.totalTime = 0;
-        this.rafId = requestAnimationFrame(this.frameTick.bind(this));
+        this.rafId = this.browser.requestAnimationFrame(
+            this.frameTick.bind(this)
+        );
     }
 
     private resizeCanvas(): void {
@@ -82,14 +92,19 @@ export class FullscreenCanvas {
         this.options.frameTick(context);
 
         if (this.options.loop) {
-            this.rafId = requestAnimationFrame(this.frameTick.bind(this));
+            this.rafId = this.browser.requestAnimationFrame(
+                this.frameTick.bind(this)
+            );
         }
     }
 
     private setupEventListeners(): void {
-        window.addEventListener("resize", this.handleResize.bind(this), {
-            passive: true,
-        });
+        this.browser.addEventListener(
+            "window",
+            "resize",
+            this.handleResize.bind(this),
+            { passive: true }
+        );
     }
 
     private handleResize(): void {
@@ -97,9 +112,13 @@ export class FullscreenCanvas {
     }
 
     public destroy(): void {
-        window.removeEventListener("resize", this.handleResize.bind(this));
+        this.browser.removeEventListener(
+            "window",
+            "resize",
+            this.handleResize.bind(this)
+        );
         if (this.rafId) {
-            cancelAnimationFrame(this.rafId);
+            this.browser.cancelAnimationFrame(this.rafId);
         }
         this.fullscreenService.destroy();
     }
