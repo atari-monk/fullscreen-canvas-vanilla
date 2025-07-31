@@ -1,17 +1,9 @@
-import type { FrameContext } from "./types/FrameContext.js";
-import type { FullscreenCanvasOptions } from "./types/FullscreenCanvasOptions.js";
+import type { FrameContext } from "./types/frame-context.js";
+import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
 import { FullscreenService } from "./fullscreen-service.js";
-
-export interface RenderStrategy {
-    render(context: FrameContext): void;
-}
-
-export class DefaultRenderStrategy implements RenderStrategy {
-    render(context: FrameContext) {
-        // Default rendering logic - clears the canvas
-        context.ctx.clearRect(0, 0, context.width, context.height);
-    }
-}
+import type { RenderStrategy } from "./types/render-strategy.js";
+import { DefaultRenderStrategy } from "./default-render-strategy.js";
+import { CanvasResizer } from "./canvas-resizer.js";
 
 export class FullscreenCanvas {
     private canvas: HTMLCanvasElement;
@@ -22,6 +14,7 @@ export class FullscreenCanvas {
     private totalTime: number = 0;
     private options: FullscreenCanvasOptions;
     private renderStrategy: RenderStrategy;
+    private canvasResizer: CanvasResizer;
 
     constructor(
         containerId: string,
@@ -47,6 +40,7 @@ export class FullscreenCanvas {
         this.options = options;
         this.renderStrategy = renderStrategy;
         this.fullscreenService = new FullscreenService(this.container);
+        this.canvasResizer = new CanvasResizer(this.canvas);
 
         this.init();
     }
@@ -62,11 +56,7 @@ export class FullscreenCanvas {
     }
 
     private resizeCanvas(): void {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        this.canvas.width = width;
-        this.canvas.height = height;
+        this.canvasResizer.resize();
     }
 
     private frameTick(time: number): void {
@@ -114,7 +104,6 @@ export class FullscreenCanvas {
         this.fullscreenService.destroy();
     }
 
-    // Allow changing the render strategy at runtime
     public setRenderStrategy(strategy: RenderStrategy): void {
         this.renderStrategy = strategy;
     }

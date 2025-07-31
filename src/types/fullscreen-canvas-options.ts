@@ -1,4 +1,4 @@
-import type { FrameContext } from "./FrameContext.js";
+import type { FrameContext } from "./frame-context.js";
 
 export interface FullscreenCanvasOptions {
     frameTick: (context: FrameContext) => void;

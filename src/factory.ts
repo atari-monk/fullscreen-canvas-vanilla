@@ -1,5 +1,5 @@
 import { FullscreenCanvas } from "./fullscreen-canvas.js";
-import type { FrameContext } from "./types/FrameContext.js";
+import type { FrameContext } from "./types/frame-context.js";
 
 interface GameCanvasOptions {
     loop?: boolean;
