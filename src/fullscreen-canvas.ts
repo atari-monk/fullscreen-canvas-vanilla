@@ -61,29 +61,14 @@ export class FullscreenCanvas {
     }
 
     private init(): void {
-        this.resizeCanvas();
-        this.setupEventListeners();
+        this.canvasResizer.resize();
         this.renderer.start();
     }
 
-    private resizeCanvas(): void {
-        this.canvasResizer.resize();
-    }
-
-    private setupEventListeners(): void {
-        this.eventSystem.add("window", "resize", this.handleResize.bind(this), {
-            passive: true,
-        });
-    }
-
-    private handleResize(): void {
-        this.resizeCanvas();
-    }
-
     public destroy(): void {
-        this.eventSystem.removeAll();
         this.renderer.stop();
         this.fullscreenService.destroy();
+        this.canvasResizer.destroy();
     }
 
     public setRenderStrategy(strategy: RenderStrategy): void {
