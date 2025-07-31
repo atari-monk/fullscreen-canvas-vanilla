@@ -1,10 +1,12 @@
 import { FullscreenCanvas } from "./fullscreen-canvas.js";
 import type { FrameContext } from "./types/frame-context.js";
-
-interface GameCanvasOptions {
-    loop?: boolean;
-    // Add other FullscreenCanvas options here as needed
-}
+import { DefaultRenderStrategy } from "./default-render-strategy.js";
+import { RealBrowserEnvironment } from "./real-browser-environment.js";
+import { EventSystem } from "./event-system.js";
+import { CanvasResizer } from "./canvas-resizer.js";
+import { FullscreenService } from "./fullscreen-service.js";
+import { Renderer } from "./renderer.js";
+import type { GameCanvasOptions } from "./types/game-canvas-options.js";
 
 export function createGameCanvas(
     containerId: string,
@@ -14,20 +16,52 @@ export function createGameCanvas(
 ): FullscreenCanvas {
     const defaults = {
         loop: true,
-        // Add other default options here
     };
 
-    return new FullscreenCanvas(containerId, canvasId, {
-        frameTick: gameEngine.frameTick.bind(gameEngine),
+    const mergedOptions = {
         ...defaults,
         ...options,
-    });
-}
+        frameTick: gameEngine.frameTick.bind(gameEngine),
+    };
 
-// Usage :
-// const gameCanvas = createGameCanvas(
-//     "canvas-container",
-//     "game-canvas",
-//     gameEngine
-//     // loop: true is now the default
-// );
+    // Create dependencies
+    const browser = options.browserEnvironment || new RealBrowserEnvironment();
+    const eventSystem = new EventSystem(browser);
+    const renderStrategy =
+        options.renderStrategy || new DefaultRenderStrategy();
+
+    // Get DOM elements
+    const container = browser.getElementById(containerId);
+    const canvas = browser.getElementById(canvasId);
+
+    if (!container || !canvas) {
+        throw new Error(
+            `Could not find elements with IDs ${containerId} and ${canvasId}`
+        );
+    }
+
+    if (!(canvas instanceof HTMLCanvasElement)) {
+        throw new Error(`Element with ID ${canvasId} is not a canvas`);
+    }
+
+    // Create services
+    const fullscreenService = new FullscreenService(
+        container,
+        browser,
+        eventSystem
+    );
+    const canvasResizer = new CanvasResizer(canvas, browser);
+    const renderer = new Renderer(
+        canvas,
+        renderStrategy,
+        mergedOptions,
+        browser
+    );
+
+    return new FullscreenCanvas(
+        eventSystem,
+        fullscreenService,
+        canvasResizer,
+        renderer
+    );
+}

@@ -1,5 +1,5 @@
-import { EventSystem } from "./event-system.js";
 import type { BrowserEnvironment } from "./types/browser-environment.js";
+import type { EventSystem } from "./event-system.js";
 
 export class FullscreenService {
     private container: HTMLElement;
@@ -8,10 +8,14 @@ export class FullscreenService {
     private browser: BrowserEnvironment;
     private eventSystem: EventSystem;
 
-    constructor(container: HTMLElement, browser: BrowserEnvironment) {
+    constructor(
+        container: HTMLElement,
+        browser: BrowserEnvironment,
+        eventSystem: EventSystem
+    ) {
         this.container = container;
         this.browser = browser;
-        this.eventSystem = new EventSystem(browser);
+        this.eventSystem = eventSystem;
         this.button = this.createFullscreenButton();
         this.isTouchDevice = this.detectTouchDevice();
         this.setupEventListeners();
