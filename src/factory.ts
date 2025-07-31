@@ -6,6 +6,7 @@ import { FullscreenService } from "./fullscreen-service.js";
 import { Renderer } from "./renderer.js";
 import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
 import type { EngineHook } from "./types/engine-hook.js";
+import { TimeCalculator } from "./time-calculator.js";
 
 export function createGameCanvas(
     containerId: string,
@@ -23,12 +24,14 @@ export function createGameCanvas(
         canvasId
     );
 
+    const timeCalculator = new TimeCalculator();
     const services = createServices(
         container,
         canvas,
         browser,
         eventSystem,
         mergedOptions,
+        timeCalculator,
         engineHook
     );
 
@@ -78,6 +81,7 @@ function createServices(
     browser: RealBrowserEnvironment,
     eventSystem: EventSystem,
     options: FullscreenCanvasOptions,
+    timeCalculator: TimeCalculator,
     engineHook: EngineHook
 ) {
     const fullscreenService = new FullscreenService(
@@ -88,7 +92,13 @@ function createServices(
 
     const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
 
-    const renderer = new Renderer(canvas, engineHook, options, browser);
+    const renderer = new Renderer(
+        canvas,
+        engineHook,
+        options,
+        browser,
+        timeCalculator
+    );
 
     return { fullscreenService, canvasResizer, renderer };
 }
