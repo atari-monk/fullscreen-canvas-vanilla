@@ -7,6 +7,7 @@ import type { TimeCalculator } from "./time-calculator.js";
 export class Renderer {
     private rafId: number = 0;
     private isRunning: boolean = false;
+    private ctx: CanvasRenderingContext2D;
 
     constructor(
         private canvas: HTMLCanvasElement,
@@ -14,7 +15,15 @@ export class Renderer {
         private options: FullscreenCanvasOptions,
         private browser: BrowserEnvironment,
         private timeCalculator: TimeCalculator
-    ) {}
+    ) {
+        const ctx = this.canvas.getContext("2d");
+        if (!ctx) {
+            throw new Error(
+                "Failed to get 2D rendering context. Canvas may be unsupported."
+            );
+        }
+        this.ctx = ctx;
+    }
 
     public start(): void {
         if (this.isRunning) return;
@@ -36,20 +45,17 @@ export class Renderer {
     }
 
     private frameTick(time: number): void {
-        const ctx = this.canvas.getContext("2d");
-        if (!ctx) return;
-
         const { deltaTime, totalTime } = this.timeCalculator.calculate(time);
 
         const context: FrameContext = {
-            ctx,
+            ctx: this.ctx,
             width: this.canvas.width,
             height: this.canvas.height,
             deltaTime,
             totalTime,
         };
 
-        ctx.clearRect(0, 0, context.width, context.height);
+        this.ctx.clearRect(0, 0, context.width, context.height);
         this.engineHook.frameTick(context);
 
         if (this.options.loop && this.isRunning) {
