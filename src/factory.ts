@@ -50,7 +50,7 @@ export function createGameCanvas(
         browser,
         eventSystem
     );
-    const canvasResizer = new CanvasResizer(canvas, browser);
+    const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
     const renderer = new Renderer(
         canvas,
         renderStrategy,

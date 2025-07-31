@@ -2,15 +2,11 @@ import type { BrowserEnvironment } from "./types/browser-environment.js";
 import { EventSystem } from "./event-system.js";
 
 export class CanvasResizer {
-    private browser: BrowserEnvironment;
-    private eventSystem: EventSystem;
-
     constructor(
         private canvas: HTMLCanvasElement,
-        browser: BrowserEnvironment
+        private browser: BrowserEnvironment,
+        private eventSystem: EventSystem
     ) {
-        this.browser = browser;
-        this.eventSystem = new EventSystem(browser);
         this.setupEventListeners();
     }
 

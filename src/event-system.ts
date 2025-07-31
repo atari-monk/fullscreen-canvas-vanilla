@@ -3,11 +3,8 @@ import type { BrowserEnvironment } from "./types/browser-environment.js";
 
 export class EventSystem {
     private listeners: Map<string, ListenerEntry> = new Map();
-    private browser: BrowserEnvironment;
 
-    constructor(browser: BrowserEnvironment) {
-        this.browser = browser;
-    }
+    constructor(private browser: BrowserEnvironment) {}
 
     add(
         target: "window" | "document" | HTMLElement,
