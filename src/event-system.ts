@@ -1,11 +1,5 @@
+import type { ListenerEntry } from "./types/listener-entry.js";
 import type { BrowserEnvironment } from "./types/browser-environment.js";
-
-type ListenerEntry = {
-    target: "window" | "document" | HTMLElement;
-    event: string;
-    callback: EventListenerOrEventListenerObject;
-    options?: boolean | AddEventListenerOptions;
-};
 
 export class EventSystem {
     private listeners: Map<string, ListenerEntry> = new Map();
