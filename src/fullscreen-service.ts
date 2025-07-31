@@ -1,3 +1,4 @@
+import { EventSystem } from "./event-system.js";
 import type { BrowserEnvironment } from "./types/browser-environment.js";
 
 export class FullscreenService {
@@ -5,10 +6,12 @@ export class FullscreenService {
     private button: HTMLButtonElement;
     private isTouchDevice: boolean;
     private browser: BrowserEnvironment;
+    private eventSystem: EventSystem;
 
     constructor(container: HTMLElement, browser: BrowserEnvironment) {
         this.container = container;
         this.browser = browser;
+        this.eventSystem = new EventSystem(browser);
         this.button = this.createFullscreenButton();
         this.isTouchDevice = this.detectTouchDevice();
         this.setupEventListeners();
@@ -33,12 +36,16 @@ export class FullscreenService {
     }
 
     private setupEventListeners(): void {
-        this.browser.addEventListener(
+        this.eventSystem.add(
             "document",
             "fullscreenchange",
             this.handleFullscreenChange.bind(this)
         );
-        this.button.addEventListener("click", this.enterFullscreen.bind(this));
+        this.eventSystem.add(
+            this.button,
+            "click",
+            this.enterFullscreen.bind(this)
+        );
     }
 
     private handleFullscreenChange(): void {
@@ -66,15 +73,7 @@ export class FullscreenService {
     }
 
     public destroy(): void {
-        this.browser.removeEventListener(
-            "document",
-            "fullscreenchange",
-            this.handleFullscreenChange.bind(this)
-        );
-        this.button.removeEventListener(
-            "click",
-            this.enterFullscreen.bind(this)
-        );
+        this.eventSystem.removeAll();
         this.button.remove();
     }
 }

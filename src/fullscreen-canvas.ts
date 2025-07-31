@@ -6,6 +6,7 @@ import { DefaultRenderStrategy } from "./default-render-strategy.js";
 import { CanvasResizer } from "./canvas-resizer.js";
 import type { BrowserEnvironment } from "./types/browser-environment.js";
 import { RealBrowserEnvironment } from "./real-browser-environment.js";
+import { EventSystem } from "./event-system.js";
 
 export class FullscreenCanvas {
     private canvas: HTMLCanvasElement;
@@ -18,6 +19,7 @@ export class FullscreenCanvas {
     private renderStrategy: RenderStrategy;
     private canvasResizer: CanvasResizer;
     private browser: BrowserEnvironment;
+    private eventSystem: EventSystem;
 
     constructor(
         containerId: string,
@@ -27,6 +29,7 @@ export class FullscreenCanvas {
         browser: BrowserEnvironment = new RealBrowserEnvironment()
     ) {
         this.browser = browser;
+        this.eventSystem = new EventSystem(browser);
         const container = this.browser.getElementById(containerId);
         const canvas = this.browser.getElementById(canvasId);
 
@@ -99,12 +102,9 @@ export class FullscreenCanvas {
     }
 
     private setupEventListeners(): void {
-        this.browser.addEventListener(
-            "window",
-            "resize",
-            this.handleResize.bind(this),
-            { passive: true }
-        );
+        this.eventSystem.add("window", "resize", this.handleResize.bind(this), {
+            passive: true,
+        });
     }
 
     private handleResize(): void {
@@ -112,11 +112,7 @@ export class FullscreenCanvas {
     }
 
     public destroy(): void {
-        this.browser.removeEventListener(
-            "window",
-            "resize",
-            this.handleResize.bind(this)
-        );
+        this.eventSystem.removeAll();
         if (this.rafId) {
             this.browser.cancelAnimationFrame(this.rafId);
         }
