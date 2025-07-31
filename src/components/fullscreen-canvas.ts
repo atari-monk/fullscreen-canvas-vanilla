@@ -26,7 +26,7 @@ export class FullscreenCanvas {
         this.eventSystem.removeAll();
     }
 
-    public setRenderStrategy(strategy: EngineHook): void {
+    public setEngineHook(strategy: EngineHook): void {
         this.renderer.setEngineHook(strategy);
     }
 }
