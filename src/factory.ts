@@ -1,21 +1,20 @@
 import { FullscreenCanvas } from "./fullscreen-canvas.js";
-import type { FrameContext } from "./types/frame-context.js";
-import { DefaultRenderStrategy } from "./default-render-strategy.js";
 import { RealBrowserEnvironment } from "./real-browser-environment.js";
 import { EventSystem } from "./event-system.js";
 import { CanvasResizer } from "./canvas-resizer.js";
 import { FullscreenService } from "./fullscreen-service.js";
 import { Renderer } from "./renderer.js";
 import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
+import type { EngineHook } from "./types/engine-hook.js";
 
 export function createGameCanvas(
     containerId: string,
     canvasId: string,
-    gameEngine: { frameTick: (context: FrameContext) => void },
+    engineHook: EngineHook,
     options: FullscreenCanvasOptions = {}
 ): FullscreenCanvas {
-    const mergedOptions = createMergedOptions(gameEngine, options);
-    const browser = getBrowserEnvironment(options);
+    const mergedOptions = createMergedOptions(options);
+    const browser = getBrowserEnvironment();
     const eventSystem = new EventSystem(browser);
 
     const { container, canvas } = getAndValidateElements(
@@ -29,7 +28,8 @@ export function createGameCanvas(
         canvas,
         browser,
         eventSystem,
-        mergedOptions
+        mergedOptions,
+        engineHook
     );
 
     return new FullscreenCanvas(
@@ -40,19 +40,15 @@ export function createGameCanvas(
     );
 }
 
-function createMergedOptions(
-    gameEngine: { frameTick: (context: FrameContext) => void },
-    options: FullscreenCanvasOptions
-) {
+function createMergedOptions(options: FullscreenCanvasOptions) {
     return {
         loop: true,
         ...options,
-        frameTick: gameEngine.frameTick.bind(gameEngine),
     };
 }
 
-function getBrowserEnvironment(options: FullscreenCanvasOptions) {
-    return options.browserEnvironment || new RealBrowserEnvironment();
+function getBrowserEnvironment() {
+    return new RealBrowserEnvironment();
 }
 
 function getAndValidateElements(
@@ -81,7 +77,8 @@ function createServices(
     canvas: HTMLCanvasElement,
     browser: RealBrowserEnvironment,
     eventSystem: EventSystem,
-    options: FullscreenCanvasOptions
+    options: FullscreenCanvasOptions,
+    engineHook: EngineHook
 ) {
     const fullscreenService = new FullscreenService(
         container,
@@ -91,9 +88,7 @@ function createServices(
 
     const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
 
-    const renderStrategy =
-        options.renderStrategy || new DefaultRenderStrategy();
-    const renderer = new Renderer(canvas, renderStrategy, options, browser);
+    const renderer = new Renderer(canvas, engineHook, options, browser);
 
     return { fullscreenService, canvasResizer, renderer };
 }

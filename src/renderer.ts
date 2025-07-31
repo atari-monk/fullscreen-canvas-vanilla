@@ -1,7 +1,7 @@
 import type { BrowserEnvironment } from "./types/browser-environment.js";
 import type { FrameContext } from "./types/frame-context.js";
 import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
-import type { RenderStrategy } from "./types/render-strategy.js";
+import type { EngineHook as EngineHook } from "./types/engine-hook.js";
 
 export class Renderer {
     private rafId: number = 0;
@@ -11,7 +11,7 @@ export class Renderer {
 
     constructor(
         private canvas: HTMLCanvasElement,
-        private renderStrategy: RenderStrategy,
+        private engineHook: EngineHook,
         private options: FullscreenCanvasOptions,
         private browser: BrowserEnvironment
     ) {}
@@ -32,8 +32,8 @@ export class Renderer {
         this.browser.cancelAnimationFrame(this.rafId);
     }
 
-    public setRenderStrategy(strategy: RenderStrategy): void {
-        this.renderStrategy = strategy;
+    public setEngineHook(strategy: EngineHook): void {
+        this.engineHook = strategy;
     }
 
     private frameTick(time: number): void {
@@ -55,8 +55,8 @@ export class Renderer {
             totalTime: this.totalTime,
         };
 
-        this.renderStrategy.render(context);
-        this.options.frameTick(context);
+        ctx.clearRect(0, 0, context.width, context.height);
+        this.engineHook.frameTick(context);
 
         if (this.options.loop && this.isRunning) {
             this.rafId = this.browser.requestAnimationFrame(

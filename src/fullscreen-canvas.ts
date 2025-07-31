@@ -2,7 +2,7 @@ import type { CanvasResizer } from "./canvas-resizer.js";
 import type { EventSystem } from "./event-system.js";
 import type { FullscreenService } from "./fullscreen-service.js";
 import type { Renderer } from "./renderer.js";
-import type { RenderStrategy } from "./types/render-strategy.js";
+import type { EngineHook } from "./types/engine-hook.js";
 
 export class FullscreenCanvas {
     constructor(
@@ -26,7 +26,7 @@ export class FullscreenCanvas {
         this.eventSystem.removeAll();
     }
 
-    public setRenderStrategy(strategy: RenderStrategy): void {
-        this.renderer.setRenderStrategy(strategy);
+    public setRenderStrategy(strategy: EngineHook): void {
+        this.renderer.setEngineHook(strategy);
     }
 }
