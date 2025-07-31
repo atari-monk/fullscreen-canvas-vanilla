@@ -2,6 +2,17 @@ import type { FrameContext } from "./types/FrameContext.js";
 import type { FullscreenCanvasOptions } from "./types/FullscreenCanvasOptions.js";
 import { FullscreenService } from "./fullscreen-service.js";
 
+export interface RenderStrategy {
+    render(context: FrameContext): void;
+}
+
+export class DefaultRenderStrategy implements RenderStrategy {
+    render(context: FrameContext) {
+        // Default rendering logic - clears the canvas
+        context.ctx.clearRect(0, 0, context.width, context.height);
+    }
+}
+
 export class FullscreenCanvas {
     private canvas: HTMLCanvasElement;
     private container: HTMLElement;
@@ -10,11 +21,13 @@ export class FullscreenCanvas {
     private lastTime: number = 0;
     private totalTime: number = 0;
     private options: FullscreenCanvasOptions;
+    private renderStrategy: RenderStrategy;
 
     constructor(
         containerId: string,
         canvasId: string,
-        options: FullscreenCanvasOptions
+        options: FullscreenCanvasOptions,
+        renderStrategy: RenderStrategy = new DefaultRenderStrategy()
     ) {
         const container = document.getElementById(containerId);
         const canvas = document.getElementById(canvasId);
@@ -32,6 +45,7 @@ export class FullscreenCanvas {
         this.container = container;
         this.canvas = canvas;
         this.options = options;
+        this.renderStrategy = renderStrategy;
         this.fullscreenService = new FullscreenService(this.container);
 
         this.init();
@@ -66,8 +80,6 @@ export class FullscreenCanvas {
         this.lastTime = time;
         this.totalTime += deltaTime;
 
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         const context: FrameContext = {
             ctx,
             width: this.canvas.width,
@@ -76,6 +88,7 @@ export class FullscreenCanvas {
             totalTime: this.totalTime,
         };
 
+        this.renderStrategy.render(context);
         this.options.frameTick(context);
 
         if (this.options.loop) {
@@ -99,5 +112,10 @@ export class FullscreenCanvas {
             cancelAnimationFrame(this.rafId);
         }
         this.fullscreenService.destroy();
+    }
+
+    // Allow changing the render strategy at runtime
+    public setRenderStrategy(strategy: RenderStrategy): void {
+        this.renderStrategy = strategy;
     }
 }
