@@ -6,31 +6,60 @@ import { EventSystem } from "./event-system.js";
 import { CanvasResizer } from "./canvas-resizer.js";
 import { FullscreenService } from "./fullscreen-service.js";
 import { Renderer } from "./renderer.js";
-import type { GameCanvasOptions } from "./types/game-canvas-options.js";
+import type { FullscreenCanvasOptions } from "./types/fullscreen-canvas-options.js";
 
 export function createGameCanvas(
     containerId: string,
     canvasId: string,
     gameEngine: { frameTick: (context: FrameContext) => void },
-    options: GameCanvasOptions = {}
+    options: FullscreenCanvasOptions = {}
 ): FullscreenCanvas {
-    const defaults = {
-        loop: true,
-    };
+    const mergedOptions = createMergedOptions(gameEngine, options);
+    const browser = getBrowserEnvironment(options);
+    const eventSystem = new EventSystem(browser);
 
-    const mergedOptions = {
-        ...defaults,
+    const { container, canvas } = getAndValidateElements(
+        browser,
+        containerId,
+        canvasId
+    );
+
+    const services = createServices(
+        container,
+        canvas,
+        browser,
+        eventSystem,
+        mergedOptions
+    );
+
+    return new FullscreenCanvas(
+        eventSystem,
+        services.fullscreenService,
+        services.canvasResizer,
+        services.renderer
+    );
+}
+
+function createMergedOptions(
+    gameEngine: { frameTick: (context: FrameContext) => void },
+    options: FullscreenCanvasOptions
+) {
+    return {
+        loop: true,
         ...options,
         frameTick: gameEngine.frameTick.bind(gameEngine),
     };
+}
 
-    // Create dependencies
-    const browser = options.browserEnvironment || new RealBrowserEnvironment();
-    const eventSystem = new EventSystem(browser);
-    const renderStrategy =
-        options.renderStrategy || new DefaultRenderStrategy();
+function getBrowserEnvironment(options: FullscreenCanvasOptions) {
+    return options.browserEnvironment || new RealBrowserEnvironment();
+}
 
-    // Get DOM elements
+function getAndValidateElements(
+    browser: RealBrowserEnvironment,
+    containerId: string,
+    canvasId: string
+) {
     const container = browser.getElementById(containerId);
     const canvas = browser.getElementById(canvasId);
 
@@ -44,24 +73,27 @@ export function createGameCanvas(
         throw new Error(`Element with ID ${canvasId} is not a canvas`);
     }
 
-    // Create services
+    return { container, canvas };
+}
+
+function createServices(
+    container: HTMLElement,
+    canvas: HTMLCanvasElement,
+    browser: RealBrowserEnvironment,
+    eventSystem: EventSystem,
+    options: FullscreenCanvasOptions
+) {
     const fullscreenService = new FullscreenService(
         container,
         browser,
         eventSystem
     );
-    const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
-    const renderer = new Renderer(
-        canvas,
-        renderStrategy,
-        mergedOptions,
-        browser
-    );
 
-    return new FullscreenCanvas(
-        eventSystem,
-        fullscreenService,
-        canvasResizer,
-        renderer
-    );
+    const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
+
+    const renderStrategy =
+        options.renderStrategy || new DefaultRenderStrategy();
+    const renderer = new Renderer(canvas, renderStrategy, options, browser);
+
+    return { fullscreenService, canvasResizer, renderer };
 }
