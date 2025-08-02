@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       zippy-shared-lib:
-        specifier: ^0.1.3
-        version: 0.1.3
+        specifier: ^0.1.4
+        version: 0.1.4
     devDependencies:
       typescript:
         specifier: ~5.8.3
@@ -372,8 +372,8 @@ packages:
       yaml:
         optional: true
 
-  zippy-shared-lib@0.1.3:
-    resolution: {integrity: sha512-4RgrPtYfB2S79pCIblFnwUCL30pWwrhdDTaYPypQnQD3QxKFBEG4LKDFNGp7vKYgw944KGL5X66A6RIZXCJ73g==}
+  zippy-shared-lib@0.1.4:
+    resolution: {integrity: sha512-m9xkDjxoUg+o7a13olhwkxQAkFfrt0RQtXYP4tiZQD3w4UqYJkyDFfKt41jrbYM9kt4uBPH3YdrdQOFFWZpPog==}
 
 snapshots:
 
@@ -611,4 +611,4 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  zippy-shared-lib@0.1.3: {}
+  zippy-shared-lib@0.1.4: {}

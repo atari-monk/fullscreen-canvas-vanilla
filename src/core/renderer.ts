@@ -1,6 +1,9 @@
-import type { BrowserEnvironment, FrameContext } from "zippy-shared-lib";
+import type {
+    BrowserEnvironment,
+    FrameContext,
+    EngineHook,
+} from "zippy-shared-lib";
 import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
-import type { EngineHook } from "../interfaces/engine-hook.js";
 import type { TimeCalculator } from "../core/time-calculator.js";
 
 export class Renderer {

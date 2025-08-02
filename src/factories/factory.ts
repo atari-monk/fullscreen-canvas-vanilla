@@ -1,6 +1,9 @@
-import type { BrowserEnvironment, EventSystem } from "zippy-shared-lib";
+import type {
+    BrowserEnvironment,
+    EventSystem,
+    EngineHook,
+} from "zippy-shared-lib";
 import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
-import type { EngineHook } from "../interfaces/engine-hook.js";
 import { CanvasResizer } from "../core/canvas-resizer.js";
 import { FullscreenService } from "../core/fullscreen-service.js";
 import { Renderer } from "../core/renderer.js";
