@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      zippy-shared-lib:
+        specifier: ^0.1.3
+        version: 0.1.3
     devDependencies:
       typescript:
         specifier: ~5.8.3
@@ -368,6 +372,9 @@ packages:
       yaml:
         optional: true
 
+  zippy-shared-lib@0.1.3:
+    resolution: {integrity: sha512-4RgrPtYfB2S79pCIblFnwUCL30pWwrhdDTaYPypQnQD3QxKFBEG4LKDFNGp7vKYgw944KGL5X66A6RIZXCJ73g==}
+
 snapshots:
 
   '@esbuild/aix-ppc64@0.25.8':
@@ -603,3 +610,5 @@ snapshots:
       tinyglobby: 0.2.14
     optionalDependencies:
       fsevents: 2.3.3
+
+  zippy-shared-lib@0.1.3: {}

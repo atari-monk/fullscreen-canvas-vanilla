@@ -1,7 +1,6 @@
+import type { BrowserEnvironment, EventSystem } from "zippy-shared-lib";
 import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
 import type { EngineHook } from "../interfaces/engine-hook.js";
-import { RealBrowserEnvironment } from "../implementations/real-browser-environment.js";
-import { EventSystem } from "../core/event-system.js";
 import { CanvasResizer } from "../core/canvas-resizer.js";
 import { FullscreenService } from "../core/fullscreen-service.js";
 import { Renderer } from "../core/renderer.js";
@@ -11,15 +10,15 @@ import { FullscreenCanvas } from "../components/fullscreen-canvas.js";
 export function createGameCanvas(
     containerId: string,
     canvasId: string,
+    eventSystem: EventSystem,
+    browserEnvironment: BrowserEnvironment,
     engineHook: EngineHook,
     options: FullscreenCanvasOptions = {}
 ): FullscreenCanvas {
     const mergedOptions = createMergedOptions(options);
-    const browser = getBrowserEnvironment();
-    const eventSystem = new EventSystem(browser);
 
     const { container, canvas } = getAndValidateElements(
-        browser,
+        browserEnvironment,
         containerId,
         canvasId
     );
@@ -28,7 +27,7 @@ export function createGameCanvas(
     const services = createServices(
         container,
         canvas,
-        browser,
+        browserEnvironment,
         eventSystem,
         mergedOptions,
         timeCalculator,
@@ -50,17 +49,13 @@ function createMergedOptions(options: FullscreenCanvasOptions) {
     };
 }
 
-function getBrowserEnvironment() {
-    return new RealBrowserEnvironment();
-}
-
 function getAndValidateElements(
-    browser: RealBrowserEnvironment,
+    browserEnvironment: BrowserEnvironment,
     containerId: string,
     canvasId: string
 ) {
-    const container = browser.getElementById(containerId);
-    const canvas = browser.getElementById(canvasId);
+    const container = browserEnvironment.getElementById(containerId);
+    const canvas = browserEnvironment.getElementById(canvasId);
 
     if (!container || !canvas) {
         throw new Error(
@@ -78,7 +73,7 @@ function getAndValidateElements(
 function createServices(
     container: HTMLElement,
     canvas: HTMLCanvasElement,
-    browser: RealBrowserEnvironment,
+    browserEnvironment: BrowserEnvironment,
     eventSystem: EventSystem,
     options: FullscreenCanvasOptions,
     timeCalculator: TimeCalculator,
@@ -86,17 +81,17 @@ function createServices(
 ) {
     const fullscreenService = new FullscreenService(
         container,
-        browser,
+        browserEnvironment,
         eventSystem
     );
 
-    const canvasResizer = new CanvasResizer(canvas, browser, eventSystem);
+    const canvasResizer = new CanvasResizer(canvas, browserEnvironment, eventSystem);
 
     const renderer = new Renderer(
         canvas,
         engineHook,
         options,
-        browser,
+        browserEnvironment,
         timeCalculator
     );
 

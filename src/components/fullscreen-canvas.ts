@@ -1,6 +1,6 @@
+import type { EventSystem } from "zippy-shared-lib";
 import type { EngineHook } from "../interfaces/engine-hook.js";
 import type { CanvasResizer } from "../core/canvas-resizer.js";
-import type { EventSystem } from "../core/event-system.js";
 import type { FullscreenService } from "../core/fullscreen-service.js";
 import type { Renderer } from "../core/renderer.js";
 

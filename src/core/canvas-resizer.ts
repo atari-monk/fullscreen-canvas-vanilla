@@ -1,5 +1,4 @@
-import type { BrowserEnvironment } from "../interfaces/browser-environment.js";
-import type { EventSystem } from "./event-system.js";
+import type { BrowserEnvironment, EventSystem } from "zippy-shared-lib";
 
 export class CanvasResizer {
     constructor(
