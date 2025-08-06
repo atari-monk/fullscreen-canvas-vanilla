@@ -1,0 +1,28 @@
+{
+    "name": "fullscreen-canvas-vanilla",
+    "version": "0.0.4",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "typescript": "~5.8.3",
+        "vite": "^7.0.4"
+    },
+    "dependencies": {
+        "zippy-shared-lib": "^0.1.8"
+    }
+}
