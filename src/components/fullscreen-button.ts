@@ -1,4 +1,4 @@
-export class FullscreenService {
+export class FullscreenButton {
     private container: HTMLElement;
     private button: HTMLButtonElement;
     private isTouchDevice: boolean;
@@ -40,7 +40,7 @@ export class FullscreenService {
                 await this.container.requestFullscreen();
             }
         } catch (error) {
-            console.error("Fullscreen error:", error);
+            console.warn("Fullscreen error:", error);
         }
     }
 

@@ -35,10 +35,6 @@ export class Renderer {
         cancelAnimationFrame(this.rafId);
     }
 
-    public setEngineHook(strategy: EngineHook): void {
-        this.engineHook = strategy;
-    }
-
     private frameTick(time: number): void {
         const { deltaTime, totalTime } = this.timeCalculator.calculate(time);
 
@@ -53,7 +49,7 @@ export class Renderer {
         this.ctx.clearRect(0, 0, context.width, context.height);
         this.engineHook.frameTick(context);
 
-        if (this.options.loop && this.isRunning) {
+        if (this.options.isAnimLoop && this.isRunning) {
             this.rafId = requestAnimationFrame(this.frameTick.bind(this));
         }
     }

@@ -1,10 +1,10 @@
 import type { EngineHook } from "zippy-shared-lib";
 import type { FullscreenCanvasOptions } from "../interfaces/fullscreen-canvas-options.js";
 import { CanvasResizer } from "../core/canvas-resizer.js";
-import { FullscreenService } from "../core/fullscreen-service.js";
 import { Renderer } from "../core/renderer.js";
 import { TimeCalculator } from "../core/time-calculator.js";
 import { FullscreenCanvas } from "../components/fullscreen-canvas.js";
+import { FullscreenButton } from "../components/fullscreen-button.js";
 
 export function createGameCanvas(
     containerId: string,
@@ -12,31 +12,11 @@ export function createGameCanvas(
     engineHook: EngineHook,
     options: FullscreenCanvasOptions = {}
 ): FullscreenCanvas {
-    const mergedOptions = createMergedOptions(options);
-
     const { container, canvas } = getAndValidateElements(containerId, canvasId);
-
-    const timeCalculator = new TimeCalculator();
-    const services = createServices(
+    return createComponents(
         container,
-        canvas,
-        mergedOptions,
-        timeCalculator,
-        engineHook
+        createServices(canvas, createMergedOptions(options), engineHook)
     );
-
-    return new FullscreenCanvas(
-        services.fullscreenService,
-        services.canvasResizer,
-        services.renderer
-    );
-}
-
-function createMergedOptions(options: FullscreenCanvasOptions) {
-    return {
-        loop: true,
-        ...options,
-    };
 }
 
 function getAndValidateElements(containerId: string, canvasId: string) {
@@ -53,18 +33,36 @@ function getAndValidateElements(containerId: string, canvasId: string) {
     return { container, canvas };
 }
 
-function createServices(
+function createComponents(
     container: HTMLElement,
+    services: { canvasResizer: CanvasResizer; renderer: Renderer }
+) {
+    return new FullscreenCanvas(
+        new FullscreenButton(container),
+        services.canvasResizer,
+        services.renderer
+    );
+}
+
+function createMergedOptions(options: FullscreenCanvasOptions) {
+    return {
+        loop: true,
+        ...options,
+    };
+}
+
+function createServices(
     canvas: HTMLCanvasElement,
     options: FullscreenCanvasOptions,
-    timeCalculator: TimeCalculator,
     engineHook: EngineHook
 ) {
-    const fullscreenService = new FullscreenService(container);
-
-    const canvasResizer = new CanvasResizer(canvas);
-
-    const renderer = new Renderer(canvas, engineHook, options, timeCalculator);
-
-    return { fullscreenService, canvasResizer, renderer };
+    return {
+        canvasResizer: new CanvasResizer(canvas),
+        renderer: new Renderer(
+            canvas,
+            engineHook,
+            options,
+            new TimeCalculator()
+        ),
+    };
 }
