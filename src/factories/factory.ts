@@ -46,7 +46,7 @@ function createComponents(
 
 function createMergedOptions(options: FullscreenCanvasOptions) {
     return {
-        loop: true,
+        isAnimLoop: true,
         ...options,
     };
 }

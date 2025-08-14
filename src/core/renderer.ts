@@ -24,6 +24,7 @@ export class Renderer {
 
     public start(): void {
         if (this.isRunning) return;
+        console.log("start");
         this.isRunning = true;
         this.timeCalculator.reset();
         this.rafId = requestAnimationFrame(this.frameTick.bind(this));
@@ -50,7 +51,7 @@ export class Renderer {
         this.engineHook.frameTick(context);
 
         if (this.options.isAnimLoop && this.isRunning) {
-            this.rafId = requestAnimationFrame(this.frameTick.bind(this));
+           this.rafId = requestAnimationFrame(this.frameTick.bind(this));
         }
     }
 }
