@@ -6,7 +6,6 @@ export class CanvasResizer {
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        // Set canvas to fill its container using CSS
         this.canvas.style.width = "100%";
         this.canvas.style.height = "100%";
 
@@ -15,7 +14,6 @@ export class CanvasResizer {
     }
 
     public resize(): void {
-        // Get the *visual* dimensions of the canvas element from the browser
         const rect = this.canvas.getBoundingClientRect();
         const pixelRatio = window.devicePixelRatio || 1;
         const width = Math.floor(rect.width * pixelRatio);
@@ -25,7 +23,6 @@ export class CanvasResizer {
             width !== this.lastDimensions.width ||
             height !== this.lastDimensions.height
         ) {
-            // Only resize if the dimensions have actually changed
             this.canvas.width = width;
             this.canvas.height = height;
             this.lastDimensions = { width, height };
@@ -45,9 +42,7 @@ export class CanvasResizer {
     }
 
     private setupEventListeners(): void {
-        // Use the ResizeObserver to listen for changes to the canvas element itself
         this.resizeObserver = new ResizeObserver(() => {
-            // Debounce the resize to prevent it from firing too frequently
             if (this.resizeTimer) clearTimeout(this.resizeTimer);
             this.resizeTimer = window.setTimeout(() => {
                 this.resize();
